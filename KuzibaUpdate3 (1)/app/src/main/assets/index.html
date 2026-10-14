@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Kuziba Mobile Money Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--bg:#eceef2;--card:#fff;--tx:#1b1f24;--mut:#6b7280;--bd:#c9ccd3;--ac:#6d28d9;--in:#15803d;--out:#b91c1c}
+@media (prefers-color-scheme:dark){:root{--bg:#15131a;--card:#201d27;--tx:#e8eaed;--mut:#a3a1ad;--bd:#3a3744;--ac:#a78bfa;--in:#4ade80;--out:#f87171}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:14px}header{display:flex;align-items:center;gap:10px;background:var(--ac);color:#fff;border-radius:12px;padding:10px 12px;margin-bottom:12px}header img{width:42px;height:42px}h1{font-size:17px;margin:0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 120px}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:3px}
+input,select,button{width:100%;font:inherit;padding:9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+button{background:var(--ac);color:#fff;border:0;font-weight:600}button.sec{background:transparent;color:var(--ac);border:1px solid var(--ac)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid b{display:block;font-size:17px}
+.in{color:var(--in)}.out{color:var(--out)}.mut{color:var(--mut);font-size:13px}
+.tx{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-top:1px solid var(--bd)}.tx small{color:var(--mut);display:block}
+.tx .x{width:auto;background:none;color:var(--mut);border:0;padding:2px 6px}
+.warn{background:#fef3c7;color:#78350f;border-radius:10px;padding:10px;margin-bottom:12px;font-size:14px}
+summary{font-weight:600;cursor:pointer}
+
+.screen{position:fixed;top:0;left:0;right:0;bottom:0;z-index:10;background:var(--bg);overflow:auto}
+.tbox{max-width:640px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding:14px}
+.tbox h2{margin:0 0 4px;font-size:19px}
+.tscroll{flex:1;overflow:auto;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin:10px 0;font-size:14px}
+.tscroll h3{font-size:14px;margin:12px 0 4px}.tscroll p{margin:0 0 6px}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--tx);margin-bottom:8px}.chk input{width:auto;margin-top:3px}
+button:disabled{opacity:.45}
+table.bt{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}.bt th{font-size:12px;color:var(--mut);text-align:left;font-weight:600}.bt th:nth-child(n+2),.bt td:nth-child(n+2){text-align:right}.bt td,.bt th{padding:5px 2px;border-top:1px solid var(--bd)}.bt{font-size:13px}
+</style></head><body>
+<div id="splash" class="screen" style="background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center">
+  <img src="logo_full.png" alt="Kuziba Mobile Money Tracker" style="width:80%;max-width:420px">
+  <div style="color:#6b7280;margin-top:14px;font-size:14px">Tap anywhere to continue</div>
+</div>
+<div id="terms" class="screen" style="display:none"><div class="tbox">
+  <h2>Terms &amp; Conditions</h2>
+  <div class="mut">Please read before using the app (Version 1).</div>
+  <div class="tscroll">
+  <h3>1. About this app</h3>
+  <p>Kuziba Mobile Money Tracker ("the App") helps mobile money agents record and report their Airtel Money, MTN Money and Zamtel Kwacha transactions. "We" means Kuziba, the developer of the App. "You" means the person using the App.</p>
+  <h3>2. Permission to access your SMS messages</h3>
+  <p>To fill in your transactions automatically, the App asks for permission to <b>read</b> and <b>receive</b> SMS messages on this phone. The App looks only for messages that contain "ZMW" and reads them to find the amount, commission, balance, customer name, customer phone number and transaction ID. All other messages are ignored. Messages that look like money messages but are not understood may be kept in a list inside the App so they can be fixed.</p>
+  <h3>3. Where your information is kept</h3>
+  <p>Your transactions and messages are stored <b>only on this phone</b>. The App does not send them to us or to anyone else, has no accounts, shows no adverts and shares no data. Reports (PDF or CSV) you create are saved on your phone and only you decide who receives them. If you copy messages to send them to the developer, that is your choice.</p>
+  <h3>4. Your consent and control</h3>
+  <p>By tapping "I Agree" you consent to the App reading and receiving your SMS messages for the purpose above. You can withdraw consent at any time by turning off the SMS permission in your phone's Settings (Apps, Kuziba MoMo, Permissions) or by uninstalling the App, which deletes its data. You can delete individual transactions inside the App.</p>
+  <h3>5. Your responsibilities</h3>
+  <p>Use the App only on a phone you own or are allowed to use. If it is used on a staff member's phone, you must tell them and get their consent. The App shows names and phone numbers of your customers: keep your phone locked, handle this information lawfully and fairly, and do not share it without a good reason. Follow the Data Protection Act, 2021 of Zambia and any rules set by your mobile money provider.</p>
+  <h3>6. Accuracy</h3>
+  <p>The App reads messages automatically and may miss or misread a message, for example if a provider changes its wording. Opening and closing balances come from the balances written in the messages. Always check important figures against your official provider statements. The App is a record-keeping aid and is not accounting, tax, legal or financial advice.</p>
+  <h3>7. No connection to mobile money providers</h3>
+  <p>The App is independent. It is not made, approved or supported by Airtel, MTN or Zamtel.</p>
+  <h3>8. Liability</h3>
+  <p>The App is provided "as is". To the fullest extent allowed by law, we are not responsible for any loss, missing transaction, wrong figure or damage that comes from using, or not being able to use, the App.</p>
+  <h3>9. Changes</h3>
+  <p>We may update these Terms. You will be asked to agree again if the changes are important.</p>
+  <h3>10. Governing law and contact</h3>
+  <p>These Terms are governed by the laws of Zambia. For questions or to ask about your data, contact Kuziba on info.kuziba@gmail.com.</p>
+  </div>
+  <label class="chk" id="agreerow"><input type="checkbox" id="agree"><span>I have read and agree to these Terms, and I allow the App to read and receive SMS messages on this phone.</span></label>
+  <button id="accept" disabled>I Agree and Continue</button>
+  <button id="decline" class="sec" style="margin-top:8px">Decline and Exit</button>
+  <button id="tclose" style="display:none">Close</button>
+</div></div>
+<div id="lock" class="screen" style="display:none"><div class="tbox" style="justify-content:center;text-align:center">
+  <img src="logo.png" alt="" style="width:80px;height:80px;margin:0 auto 10px">
+  <h2>Enter your PIN</h2>
+  <input id="pin0" type="password" inputmode="numeric" maxlength="8" style="text-align:center;margin:10px 0">
+  <div class="out" id="lockmsg" style="min-height:20px"></div>
+  <button id="unlock">Unlock</button>
+</div></div>
+<main id="app" style="display:none">
+<header><img src="logo.png" alt=""><h1>Kuziba Mobile Money Tracker</h1></header>
+<div id="perm" class="warn" style="display:none">
+  <b>SMS access is needed</b> so transactions fill in automatically.<br><br>
+  <button id="allow">Allow SMS access</button>
+  <p style="margin:8px 0 0">If nothing happens: open phone <b>Settings → Apps → Agent Tracker</b>, tap the <b>⋮ menu → Allow restricted settings</b>, then <b>Permissions → SMS → Allow</b>.</p>
+</div>
+<div id="orph" class="warn" style="display:none"></div>
+<div id="unr" class="warn" style="display:none"></div>
+
+<div class="card">
+  <div class="row">
+    <div><label>From</label><input type="date" id="from"></div>
+    <div><label>To</label><input type="date" id="to"></div>
+    <div><label>Provider</label><select id="pf"><option value="">All</option><option>Airtel Money</option><option>MTN Money</option><option>Zamtel Kwacha</option></select></div>
+  </div>
+  <div class="row" style="margin-top:8px"><button class="sec" id="rt">Today</button><button class="sec" id="rw">This week</button><button class="sec" id="rm">This month</button></div>
+</div>
+
+<div id="alerts" class="warn" style="display:none"></div>
+
+<div class="card"><div class="grid">
+  <div><label>Customer deposits (cash received)</label><b class="in" id="sd">0.00</b></div>
+  <div><label>Customer withdrawals (cash paid)</label><b class="out" id="sw">0.00</b></div>
+  <div><label>Commission earned</label><b id="sc">0.00</b></div>
+  <div><label>Net cash (deposits − withdrawals)</label><b id="sn">0.00</b></div>
+  <div><label>Expenses</label><b class="out" id="se">0.00</b></div>
+  <div><label>Estimated profit (commission − expenses)</label><b id="sp">0.00</b></div>
+</div><div id="bal"></div></div>
+
+<div class="card">
+  <div class="row"><button class="sec" id="scan">Scan old messages</button><button class="sec" id="csv">Download CSV</button><button class="sec" id="pdf">Download PDF</button></div>
+  <div class="mut" id="msg" style="margin-top:8px;min-height:18px"></div>
+</div>
+
+<div class="card">
+  <b>Daily closing check</b>
+  <div class="mut" style="margin:4px 0 8px">Compare what the app expects with what you actually have. Differences are items to check, not proof of a mistake.</div>
+  <label>Date</label><input type="date" id="cd">
+  <div id="closing"></div>
+</div>
+
+<details class="card"><summary>Add an expense</summary>
+  <div class="row" style="margin-top:10px">
+    <div><label>Date</label><input type="date" id="ed"></div>
+    <div><label>Type</label><select id="ec"><option>Rent</option><option>Transport</option><option>Electricity</option><option>Airtime / data</option><option>Wages</option><option>Other</option></select></div>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <div><label>Amount (ZMW)</label><input id="ea" type="number" inputmode="decimal" step="any"></div>
+    <div><label>Note</label><input id="en"></div>
+  </div>
+  <div style="margin-top:10px"><button id="eadd">Add expense</button></div>
+</details>
+
+<details class="card"><summary>Add a transaction by hand (e.g. Zamtel)</summary>
+  <div class="row" style="margin-top:10px">
+    <div><label>Provider</label><select id="mp"><option>Zamtel Kwacha</option><option>Airtel Money</option><option>MTN Money</option></select></div>
+    <div><label>Type</label><select id="mt"><option value="deposit">Customer deposit</option><option value="withdrawal">Customer withdrawal</option></select></div>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <div><label>Amount (ZMW)</label><input id="ma" type="number" inputmode="decimal" step="any"></div>
+    <div><label>Commission (ZMW)</label><input id="mc" type="number" inputmode="decimal" step="any"></div>
+  </div>
+  <div class="row" style="margin-top:8px"><div><label>Float balance after (ZMW) — needed for opening/closing</label><input id="mb" type="number" inputmode="decimal" step="any"></div></div>
+  <div class="row" style="margin-top:8px">
+    <div><label>Customer name</label><input id="mn"></div>
+    <div><label>Phone</label><input id="mph" inputmode="tel"></div>
+  </div>
+  <div class="row" style="margin-top:8px"><div><label>Date</label><input type="date" id="md"></div><div><label>Note</label><input id="mnote"></div></div>
+  <div style="margin-top:10px"><button id="madd">Add</button></div>
+</details>
+
+<div class="card"><input id="q" placeholder="Search name, phone, transaction ID, amount, provider"></div>
+<div class="card" id="list"></div>
+<div class="card" id="elist" style="display:none"></div>
+<details class="card"><summary>Settings and security</summary>
+  <div style="margin-top:10px"><label>Warn me when a network's float falls below (ZMW, 0 = off)</label><input id="lowf" type="number" inputmode="decimal" step="any"></div>
+  <div style="margin-top:12px"><label>App lock PIN (4 to 8 digits)</label><input id="pin1" type="password" inputmode="numeric" maxlength="8"></div>
+  <div class="row" style="margin-top:8px"><button class="sec" id="pset">Set / change PIN</button><button class="sec" id="prem">Remove PIN</button></div>
+  <div class="mut" style="margin-top:6px">There is no PIN recovery. If you forget it, the app must be reinstalled, which erases its data.</div>
+  <div style="margin-top:12px"><button class="sec" id="psys">Phone permission settings</button></div>
+</details>
+<button class="sec" id="tlink" style="margin-bottom:20px">View Terms &amp; Conditions</button>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const A=window.Android;
+const fmt=n=>Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const ymd=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const hm=ts=>{const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+const lbl=t=>t==='deposit'?'Customer deposit':'Customer withdrawal';
+$('from').value=$('to').value=$('md').value=ymd(Date.now());
+let data={tx:[],orphans:[],unread:[]};
+const kv=(k,d)=>{try{const x=A.getKV(k);return x?JSON.parse(x):d}catch(e){return d}};
+const setkv=(k,v)=>A.setKV(k,JSON.stringify(v));
+const PROVS=['Airtel Money','MTN Money','Zamtel Kwacha'];
+const short=p=>p.split(' ')[0];
+let exps=kv('exp',[]);
+$('cd').value=$('ed').value=ymd(Date.now());
+
+function load(){try{data=JSON.parse(A.getData())}catch(e){}render()}
+function rows(){
+  return data.tx.filter(t=>{const d=ymd(t.ts);return (!$('from').value||d>=$('from').value)&&(!$('to').value||d<=$('to').value)&&(!$('pf').value||t.provider===$('pf').value)})
+    .sort((a,b)=>b.ts-a.ts);
+}
+function balFor(p,from,to){
+  const all=data.tx.filter(t=>t.provider===p&&t.bal>0).sort((a,b)=>a.ts-b.ts);
+  const inr=all.filter(t=>{const d=ymd(t.ts);return (!from||d>=from)&&(!to||d<=to)});
+  const before=all.filter(t=>from&&ymd(t.ts)<from);
+  let open=null,close=null;
+  if(inr.length){close=inr[inr.length-1].bal;
+    if(before.length)open=before[before.length-1].bal;
+    else{const f=inr[0];open=f.type==='deposit'?f.bal+f.amount:f.bal-f.amount}}
+  else if(before.length){open=close=before[before.length-1].bal}
+  return {open,close};
+}
+function balances(){
+  const provs=$('pf').value?[$('pf').value]:PROVS;
+  return provs.map(p=>Object.assign({p},balFor(p,$('from').value,$('to').value)));
+}
+const inR=ts=>{const d=ymd(ts);return (!$('from').value||d>=$('from').value)&&(!$('to').value||d<=$('to').value)};
+const rangeExps=()=>exps.filter(e=>inR(e.ts)).sort((a,b)=>b.ts-a.ts);
+const expSum=()=>rangeExps().reduce((s,e)=>s+e.amt,0);
+function alertsList(r){
+  const out=[];
+  if((data.unread||[]).length)out.push(data.unread.length+' message(s) could not be read (see the box above).');
+  if(data.orphans.length)out.push(data.orphans.length+' MTN commission message(s) could not be matched to a transaction.');
+  const s=r.slice().sort((a,b)=>a.ts-b.ts);
+  PROVS.forEach(p=>{
+    const l=s.filter(t=>t.provider===p);
+    for(let i=1;i<l.length;i++){const a=l[i-1],b=l[i];
+      if(a.type===b.type&&a.amount===b.amount&&a.phone&&a.phone===b.phone&&b.ts-a.ts<600000)
+        out.push('Possible duplicate: '+lbl(b.type)+' of ZMW '+fmt(b.amount)+' for '+(b.name||b.phone)+' ('+ymd(b.ts)+' '+hm(b.ts)+').')}
+    const m=l.filter(t=>t.src==='sms'&&t.bal>0);let j=0;
+    for(let i=1;i<m.length;i++){const a=m[i-1],b=m[i];const ex=b.type==='deposit'?a.bal-b.amount:a.bal+b.amount;
+      if(Math.abs(ex-b.bal)>0.015&&j++<3)out.push(short(p)+': after '+ymd(b.ts)+' '+hm(b.ts)+' the balance is ZMW '+fmt(b.bal)+' but ZMW '+fmt(ex)+' was expected. A message may be missing, float may have been added, or a reversal happened.')}
+    if(j>3)out.push(short(p)+': '+(j-3)+' more balance differences.');
+    const last=data.tx.filter(t=>t.provider===p&&t.bal>0).sort((a,b)=>b.ts-a.ts)[0];
+    const low=parseFloat((kv('set',{}).low)||0);
+    if(low>0&&last&&last.bal<low)out.push(short(p)+' float is low: ZMW '+fmt(last.bal)+'.');
+  });
+  return out;
+}
+function renderExtras(r){
+  let c=0;r.forEach(t=>{c+=t.com||0});const e=expSum();
+  $('se').textContent=fmt(e);$('sp').textContent=fmt(c-e);$('sp').className=c-e>=0?'in':'out';
+  const A2=$('alerts');A2.textContent='';const al=alertsList(r);
+  if(al.length){A2.style.display='block';
+    const h=document.createElement('div');h.innerHTML='<b>Items to verify</b> (these are not necessarily errors)';A2.append(h);
+    al.slice(0,8).forEach(x=>{const d=document.createElement('div');d.style.marginTop='4px';d.textContent='• '+x;A2.append(d)});
+    if(al.length>8){const d=document.createElement('div');d.textContent='…and '+(al.length-8)+' more.';A2.append(d)}
+  }else A2.style.display='none';
+  const E=$('elist');E.textContent='';const re=rangeExps();
+  if(re.length){E.style.display='block';const h=document.createElement('b');h.textContent='Expenses in this range';E.append(h);
+    re.forEach(x=>{const d=document.createElement('div');d.className='tx';
+      const l=document.createElement('div');l.textContent=x.cat+(x.note?' · '+x.note:'');const sm=document.createElement('small');sm.textContent=ymd(x.ts);l.append(sm);
+      const m=document.createElement('b');m.className='out';m.textContent='−'+fmt(x.amt);
+      const b=document.createElement('button');b.className='x';b.textContent='✕';
+      b.onclick=()=>{if(confirm('Delete this expense?')){exps=exps.filter(z=>z.id!==x.id);setkv('exp',exps);render()}};
+      d.append(l,m,b);E.append(d)})}
+  else E.style.display='none';
+  closingRender();
+}
+function closingRender(){
+  const box=$('closing');
+  if(document.activeElement&&box.contains(document.activeElement)&&document.activeElement!==box)return;
+  const cd=$('cd').value||ymd(Date.now());
+  const cl=kv('close',{});const sv=cl[cd]||{floats:{}};
+  let prev='';Object.keys(cl).filter(d=>d<cd&&cl[d].cashActual!==undefined&&cl[d].cashActual!=='').sort().forEach(d=>prev=cl[d].cashActual);
+  const dayTx=data.tx.filter(t=>ymd(t.ts)===cd);
+  const diffHtml=(act,ex)=>{if(act==null||ex==null||isNaN(act)||isNaN(ex))return '';const d=act-ex;
+    return Math.abs(d)<0.01?'<div class="in">Matches ✓</div>':'<div class="out">Difference ZMW '+fmt(d)+' — please check ('+(d<0?'less':'more')+' than expected)</div>'};
+  let h='',totD=0,totW=0;
+  PROVS.forEach((p,i)=>{
+    let dp=0,wd=0;dayTx.filter(x=>x.provider===p).forEach(x=>{x.type==='deposit'?dp+=x.amount:wd+=x.amount});totD+=dp;totW+=wd;
+    const b=balFor(p,cd,cd);const ex=b.open==null?null:b.open-dp+wd;
+    const saved=sv.floats[p];const val=(saved!==undefined&&saved!=='')?saved:(b.close==null?'':b.close);
+    h+='<div style="border-top:1px solid var(--bd);padding:8px 0"><b>'+p+'</b><div class="mut">Opening '+(b.open==null?'—':fmt(b.open))+' − deposits '+fmt(dp)+' + withdrawals '+fmt(wd)+' = <b>expected closing '+(ex==null?'—':fmt(ex))+'</b></div>'
+     +'<label style="margin-top:6px">Actual closing float (ZMW)</label><input id="cf'+i+'" type="number" step="any" inputmode="decimal" value="'+val+'">'+diffHtml(parseFloat(val),ex)+'</div>';
+  });
+  const exD=exps.filter(x=>ymd(x.ts)===cd).reduce((s,x)=>s+x.amt,0);
+  const co=(sv.cashOpen!==undefined&&sv.cashOpen!=='')?sv.cashOpen:prev;
+  const exCash=co===''?null:parseFloat(co)+totD-totW-exD;
+  h+='<div style="border-top:1px solid var(--bd);padding:8px 0"><b>Cash in hand</b><label style="margin-top:6px">Opening cash (ZMW)</label><input id="co" type="number" step="any" inputmode="decimal" value="'+co+'">'
+   +'<div class="mut" style="margin-top:4px">Opening + deposits '+fmt(totD)+' − withdrawals '+fmt(totW)+' − expenses '+fmt(exD)+' = <b>expected cash '+(exCash==null?'—':fmt(exCash))+'</b></div>'
+   +'<label style="margin-top:6px">Actual cash counted (ZMW)</label><input id="ca" type="number" step="any" inputmode="decimal" value="'+(sv.cashActual===undefined?'':sv.cashActual)+'">'
+   +diffHtml(parseFloat(sv.cashActual),exCash)+'</div>';
+  box.innerHTML=h;
+  box.querySelectorAll('input').forEach(i=>i.onchange=saveClose);
+}
+function saveClose(){
+  const cd=$('cd').value||ymd(Date.now());const cl=kv('close',{});const f={};
+  PROVS.forEach((p,i)=>{f[p]=$('cf'+i).value});
+  cl[cd]={floats:f,cashOpen:$('co').value,cashActual:$('ca').value};
+  setkv('close',cl);document.activeElement.blur();render();
+}
+function render(){
+  $('perm').style.display=A.hasSmsPermission()?'none':'block';
+  const o=$('orph');o.textContent='';
+  if(data.orphans.length){
+    o.style.display='block';
+    const h=document.createElement('div');h.innerHTML='<b>Needs checking:</b> MTN commission messages that could not be matched to a transaction.';o.append(h);
+    data.orphans.forEach(x=>{const b=document.createElement('button');b.className='sec';b.style.marginTop='6px';
+      b.textContent='ZMW '+fmt(x.amount)+' on '+ymd(x.ts)+' '+hm(x.ts)+' — dismiss';b.onclick=()=>{A.dismiss(x.id);load()};o.append(b)});
+  }else o.style.display='none';
+  const u=$('unr');u.textContent='';
+  if((data.unread||[]).length){
+    u.style.display='block';
+    const h=document.createElement('div');h.innerHTML='<b>'+data.unread.length+' message(s) the app could not read.</b> Copy them and send them to your developer so they can be added.';u.append(h);
+    const b1=document.createElement('button');b1.className='sec';b1.style.marginTop='6px';b1.textContent='Copy these messages';
+    b1.onclick=()=>{A.copyText(data.unread.map(x=>x.body).join('\n\n'));$('msg').textContent='Copied. Paste them into your chat.'};
+    const b2=document.createElement('button');b2.className='sec';b2.style.marginTop='6px';b2.textContent='Clear this list';
+    b2.onclick=()=>{A.clearUnread();load()};
+    u.append(b1,b2);
+  }else u.style.display='none';
+  const r=rows();let d=0,w=0,c=0;
+  r.forEach(t=>{t.type==='deposit'?d+=t.amount:w+=t.amount;c+=t.com||0});
+  $('sd').textContent=fmt(d);$('sw').textContent=fmt(w);$('sc').textContent=fmt(c);
+  const n=d-w;$('sn').textContent=fmt(n);$('sn').className=n>=0?'in':'out';
+  const B=$('bal');B.textContent='';
+  const tb=document.createElement('table');tb.className='bt';
+  tb.innerHTML='<tr><th>Network</th><th>Opening</th><th>Deposits</th><th>Withdrawals</th><th>Closing</th></tr>';
+  balances().forEach(b=>{const rr=r.filter(t=>t.provider===b.p);let dp=0,wd=0;rr.forEach(t=>{t.type==='deposit'?dp+=t.amount:wd+=t.amount});
+    const tr=document.createElement('tr');
+    [short(b.p),b.open==null?'—':fmt(b.open),fmt(dp),fmt(wd),b.close==null?'—':fmt(b.close)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td)});tb.append(tr)});
+  B.append(tb);
+  const nt=document.createElement('div');nt.className='mut';nt.style.marginTop='6px';nt.textContent='Float in ZMW. Deposits reduce your float, withdrawals increase it. Opening and closing come from the balance in each message.';B.append(nt);
+  renderExtras(r);
+  const q=($('q').value||'').trim().toLowerCase();
+  const lr=q?r.filter(t=>[t.name,t.phone,t.ref,t.provider,t.note,String(t.amount),Number(t.amount).toFixed(2)].join(' ').toLowerCase().includes(q)):r;
+  const L=$('list');L.textContent='';
+  if(!lr.length){L.textContent=q?'Nothing matches your search.':'No transactions in this range yet.';return}
+  lr.forEach(t=>{
+    const e=document.createElement('div');e.className='tx';
+    const l=document.createElement('div');
+    const a=document.createElement('div');a.textContent=lbl(t.type)+(t.name?' · '+t.name:'');
+    const s=document.createElement('small');s.textContent=[ymd(t.ts)+' '+hm(t.ts),t.provider,t.phone,t.note].filter(Boolean).join(' · ');
+    l.append(a,s);
+    const rt=document.createElement('div');rt.style.textAlign='right';
+    const m=document.createElement('b');m.className=t.type==='deposit'?'in':'out';m.textContent=(t.type==='deposit'?'+':'−')+fmt(t.amount);
+    rt.append(m);
+    if(t.com){const f=document.createElement('small');f.textContent='comm '+fmt(t.com);rt.append(f)}
+    const x=document.createElement('button');x.className='x';x.textContent='✕';
+    x.onclick=()=>{if(confirm('Delete this transaction?')){A.remove(t.id);load()}};
+    e.append(l,rt,x);L.append(e);
+  });
+}
+['from','to','pf'].forEach(k=>$(k).onchange=render);
+$('allow').onclick=()=>A.requestSms();
+window.onPerm=()=>{render();if(A.hasSmsPermission())doScan()};
+function doScan(){
+  $('msg').textContent='Reading messages...';
+  setTimeout(()=>{const x=A.scanSms();
+    if(x==='E:terms'){$('msg').textContent='Please accept the Terms first.';return}
+    if(x.indexOf('E:')===0){$('msg').textContent=x==='E:no-permission'?'SMS access is not allowed yet. Tap Allow SMS access above.':'Could not read messages ('+x.slice(2)+').';load();return}
+    const p=x.split('|');
+    $('msg').textContent='Checked '+p[1]+' money message(s): '+p[0]+' new transaction(s) added'+(parseInt(p[2])>0?', '+p[2]+' not understood (see yellow box).':'.');load()},50);
+}
+$('scan').onclick=doScan;
+$('madd').onclick=()=>{
+  const amt=parseFloat($('ma').value);if(!(amt>0)){$('msg').textContent='Enter an amount above 0.';return}
+  const d=$('md').value?new Date($('md').value+'T12:00:00').getTime():Date.now();
+  A.addManual(JSON.stringify({provider:$('mp').value,type:$('mt').value,amount:amt,com:parseFloat($('mc').value)||0,bal:parseFloat($('mb').value)||0,
+    name:$('mn').value.trim(),phone:$('mph').value.trim(),note:$('mnote').value.trim(),ts:d,ref:''}));
+  ['ma','mc','mb','mn','mph','mnote'].forEach(k=>$(k).value='');$('msg').textContent='Added ✓';load();
+};
+const esc=v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+const stamp=()=>($('from').value||'all')+'_to_'+($('to').value||'all');
+function totals(r){let d=0,w=0,c=0;r.forEach(t=>{t.type==='deposit'?d+=t.amount:w+=t.amount;c+=t.com||0});return{d,w,c}}
+$('csv').onclick=()=>{
+  const r=rows().reverse();if(!r.length){$('msg').textContent='Nothing to export in this range.';return}
+  const h=['Date','Time','Provider','Type','Customer','Phone','Amount (ZMW)','Commission (ZMW)','Float balance after (ZMW)','Source','Note','Reference'];
+  const L=[h.join(',')].concat(r.map(t=>[ymd(t.ts),hm(t.ts),t.provider,lbl(t.type),t.name,t.phone,t.amount.toFixed(2),(t.com||0).toFixed(2),t.bal?t.bal.toFixed(2):'',t.src,t.note,t.ref].map(esc).join(',')));
+  L.push('');L.push('Opening and closing float balances (ZMW)');L.push('Network,Opening,Closing');
+  balances().forEach(b=>L.push([b.p,b.open==null?'':b.open.toFixed(2),b.close==null?'':b.close.toFixed(2)].map(esc).join(',')));
+  L.push('');L.push('Expenses (ZMW),'+expSum().toFixed(2));
+  L.push('Estimated profit = commission - expenses (ZMW),'+(totals(r).c-expSum()).toFixed(2));
+  $('msg').textContent=A.saveCsv('agent-transactions_'+stamp()+'.csv',L.join('\n'));
+};
+$('pdf').onclick=()=>{
+  const r=rows().reverse();if(!r.length){$('msg').textContent='Nothing to export in this range.';return}
+  const cols=[['Date / time',78],['Provider',68],['Type',70],['Customer',117],['Amount',60],['Comm.',45],['Balance',60]];
+  const body=r.map(t=>[ymd(t.ts)+' '+hm(t.ts),t.provider,t.type==='deposit'?'Deposit':'Withdrawal',t.name,(t.type==='deposit'?'+':'-')+fmt(t.amount),fmt(t.com),t.bal?fmt(t.bal):'']);
+  const s=totals(r);
+  const foot=['Period: '+($('from').value||'start')+' to '+($('to').value||'today'),'Deposits: ZMW '+fmt(s.d)+'    Withdrawals: ZMW '+fmt(s.w),'Commission: ZMW '+fmt(s.c)+'    Net cash: ZMW '+fmt(s.d-s.w)].concat(balances().map(b=>b.p+':  opening ZMW '+(b.open==null?'n/a':fmt(b.open))+'   closing ZMW '+(b.close==null?'n/a':fmt(b.close)))).concat(['Expenses: ZMW '+fmt(expSum())+'    Estimated profit: ZMW '+fmt(s.c-expSum())]);
+  $('msg').textContent=A.savePdf('agent-transactions_'+stamp()+'.pdf','Kuziba Mobile Money Tracker',JSON.stringify(cols),JSON.stringify(body),JSON.stringify(foot));
+};
+let went=false;
+function showMain(){$('splash').style.display='none';$('terms').style.display='none';$('app').style.display='block';load();if(A.hasSmsPermission())doScan()}
+function next(){if(went)return;went=true;$('splash').style.display='none';
+  if(A.termsAccepted()){if(A.hasPin())$('lock').style.display='block';else showMain()}else $('terms').style.display='block'}
+setTimeout(next,2500);$('splash').onclick=next;
+$('agree').onchange=()=>{$('accept').disabled=!$('agree').checked};
+$('accept').onclick=()=>{A.acceptTerms();showMain();A.requestSms()};
+$('decline').onclick=()=>A.exitApp();
+function openTerms(){['agreerow','accept','decline'].forEach(i=>$(i).style.display='none');$('tclose').style.display='block';$('terms').style.display='block'}
+$('tclose').onclick=()=>{$('terms').style.display='none'};
+$('tlink').onclick=openTerms;
+$('rt').onclick=()=>{$('from').value=$('to').value=ymd(Date.now());render()};
+$('rw').onclick=()=>{const d=new Date(),k=(d.getDay()+6)%7;$('from').value=ymd(new Date(d.getFullYear(),d.getMonth(),d.getDate()-k).getTime());$('to').value=ymd(Date.now());render()};
+$('rm').onclick=()=>{const d=new Date();$('from').value=ymd(new Date(d.getFullYear(),d.getMonth(),1).getTime());$('to').value=ymd(Date.now());render()};
+$('cd').onchange=render;$('q').oninput=render;
+$('eadd').onclick=()=>{const a=parseFloat($('ea').value);if(!(a>0)){$('msg').textContent='Enter an expense amount above 0.';return}
+  exps.push({id:Date.now()+'',ts:$('ed').value?new Date($('ed').value+'T12:00:00').getTime():Date.now(),cat:$('ec').value,amt:a,note:$('en').value.trim()});
+  setkv('exp',exps);$('ea').value=$('en').value='';$('msg').textContent='Expense added ✓';render()};
+$('lowf').value=kv('set',{}).low||'';
+$('lowf').onchange=()=>{const o=kv('set',{});o.low=parseFloat($('lowf').value)||0;setkv('set',o);render()};
+$('pset').onclick=()=>{const v=$('pin1').value;if(!/^\d{4,8}$/.test(v)){$('msg').textContent='PIN must be 4 to 8 digits.';return}A.setPin(v);$('pin1').value='';$('msg').textContent='PIN saved. It will be asked when the app opens.'};
+$('prem').onclick=()=>{if(A.hasPin()&&confirm('Remove the PIN lock?')){A.clearPin();$('msg').textContent='PIN removed.'}};
+$('psys').onclick=()=>A.openSettings();
+$('unlock').onclick=()=>{if(A.checkPin($('pin0').value)){$('pin0').value='';$('lockmsg').textContent='';$('lock').style.display='none';showMain()}else $('lockmsg').textContent='Wrong PIN. Try again.'};
+setInterval(()=>{if(!document.hidden&&$('app').style.display!=='none')load()},4000);
+</script></body></html>
