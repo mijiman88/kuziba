@@ -73,7 +73,7 @@ table.bt{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}.bt t
 <div id="perm" class="warn" style="display:none">
   <b>SMS access is needed</b> so transactions fill in automatically.<br><br>
   <button id="allow">Allow SMS access</button>
-  <p style="margin:8px 0 0">If nothing happens: open phone <b>Settings → Apps → Agent Tracker</b>, tap the <b>⋮ menu → Allow restricted settings</b>, then <b>Permissions → SMS → Allow</b>.</p>
+  <p style="margin:8px 0 0">If nothing happens: open phone <b>Settings → Apps → Agent Tracker → Permissions → SMS → Allow</b>. On <b>Android 13 or newer</b> you may first need to tap the <b>⋮ menu → Allow restricted settings</b>.</p>
 </div>
 <div id="orph" class="warn" style="display:none"></div>
 <div id="unr" class="warn" style="display:none"></div>
@@ -334,7 +334,7 @@ $('madd').onclick=()=>{
     name:$('mn').value.trim(),phone:$('mph').value.trim(),note:$('mnote').value.trim(),ts:d,ref:''}));
   ['ma','mc','mb','mn','mph','mnote'].forEach(k=>$(k).value='');$('msg').textContent='Added ✓';load();
 };
-const esc=v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+const esc=v=>{v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
 const stamp=()=>($('from').value||'all')+'_to_'+($('to').value||'all');
 function totals(r){let d=0,w=0,c=0;r.forEach(t=>{t.type==='deposit'?d+=t.amount:w+=t.amount;c+=t.com||0});return{d,w,c}}
 $('csv').onclick=()=>{

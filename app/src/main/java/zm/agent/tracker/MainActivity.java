@@ -46,6 +46,7 @@ public class MainActivity extends Activity {
     }
 
     boolean hasSms() {
+        if (Build.VERSION.SDK_INT < 23) return true; // old Android grants SMS permission at install
         return checkSelfPermission(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
             && checkSelfPermission(Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
     }
@@ -60,10 +61,15 @@ public class MainActivity extends Activity {
             try (OutputStream o = getContentResolver().openOutputStream(u)) { o.write(data); }
             return "Saved to your Downloads folder: " + name;
         }
-        File d = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            runOnUiThread(() -> requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2));
+            return "Please allow Storage access, then tap the download button again.";
+        }
+        File d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        d.mkdirs();
         File f = new File(d, name);
         try (FileOutputStream o = new FileOutputStream(f)) { o.write(data); }
-        return "Saved: " + f.getAbsolutePath();
+        return "Saved to your Downloads folder: " + name;
     }
 
     class Bridge {
@@ -92,7 +98,10 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void exitApp() { runOnUiThread(() -> finish()); }
 
         @JavascriptInterface public void requestSms() {
-            runOnUiThread(() -> requestPermissions(new String[]{Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS}, 1));
+            runOnUiThread(() -> {
+                if (Build.VERSION.SDK_INT < 23) w.evaluateJavascript("window.onPerm && onPerm()", null);
+                else requestPermissions(new String[]{Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS}, 1);
+            });
         }
 
         @JavascriptInterface public String getData() {
